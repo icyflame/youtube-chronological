@@ -26,44 +26,44 @@ UPDATE_PLAYLIST=false
 
 1. Visit the [Google API Console](https://console.developers.google.com/apis/)
 
-  ![img](./img/api-console.png)
+    ![img](./img/api-console.png)
 
 2. Create a new project: Click on the dropdown in the top left next to the
 Google APIs logo, then press on the PLUS icon and create a new project.
 
-  ![img](./img/create-project.png)
+    ![img](./img/create-project.png)
 
 3. Enable the Youtube Data API for your project
 4. Create OAuth2 Credentials for your project
 
-  ![img](./img/create-credentials.png)
+    ![img](./img/create-credentials.png)
 
 5. Copy the CLIENT_ID and CLIENT_SECRET to your `.env` file template
 6. After copying, run the `oauth2.js` script using:
 
-  ```sh
-  $ node oauth2.js
-  ```
+    ```sh
+    $ node oauth2.js
+    ```
 
-  This will give you a URL. Open it in your browser and grant access so that the
-  app can add videos to the playlist.
+    This will give you a URL. Open it in your browser and grant access so that the
+    app can add videos to the playlist.
 
 7. Copy the token displayed in your browser and paste it back into the terminal
 window
 
 8. You will see an output like this:
 
-  ```sh
-  COMPLETED!
+    ```sh
+    COMPLETED!
 
 
-  Access token:
+    Access token:
 
-  ya29.GlvXBGOsnx0eRrkPKtRfUKRtE_CmW47r6cMmOrzZF-8yu8jx0ZVANfPqW-NTA3qW7v8-HRbMbdH0U-xooYxRNZnEO9i5pjJT45tr7e4d1B1hLqiHadtysh8MK4Gm4
-  ```
+    ya29.GlvXBGOsnx0eRrkPKtRfUKRtE_CmW47r6cMmOrzZF-8yu8jx0ZVANfPqW-NTA3qW7v8-HRbMbdH0U-xooYxRNZnEO9i5pjJT45tr7e4d1B1hLqiHadtysh8MK4Gm4
+    ```
 
-  In this, copy the access token and paste it as the value for the
-  `YOUTUBE_OAUTH2_TOKEN` key in the `.env` template.
+    In this, copy the access token and paste it as the value for the
+    `YOUTUBE_OAUTH2_TOKEN` key in the `.env` template.
 
 9. Visit [Youtube](https://www.youtube.com/) and create a new playlist.
 
@@ -77,7 +77,7 @@ like this:
 11. Put the name of the channel that you want to create the playlist for in the
     `.env` file.
 
-  Note that you _have_ to put the username of the channel. NOT the channel's ID.
+    Note that you _have_ to put the username of the channel. NOT the channel's ID.
 
 12. Change the line `UPDATE_PLAYLIST=false` to `UPDATE_PLAYLIST=true` in the
     .env file. This is a safety flag that exists in case you just want to check
