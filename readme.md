@@ -9,7 +9,20 @@ _Warning:_ Using this script is not easy or intuitive. I apologise for that. I p
 to put this up as a Web application, but building that was cumbersome so I
 didn't do it. If you want to take it up, please feel free to submit a patch!
 
-In any case, I will put the instructions to run this script:
+Clone this repository and create a `.env` file.
+
+`$ touch .env`
+
+`.env` template:
+
+```sh
+OAUTH2_CLIENT_ID=
+OAUTH2_SECRET=
+BASE_PLAYLIST_ID=
+CHANNELS=
+YOUTUBE_OAUTH2_TOKEN=
+UPDATE_PLAYLIST=false
+```
 
 1. Visit the [Google API Console](https://console.developers.google.com/apis/)
 
