@@ -106,24 +106,24 @@ Promise.map(channels, username => {
 
           value = _.filter(value, video => video.id && video.id.kind === 'youtube#video');
 
-          value = _.slice(value, 0, 3);
-
           Promise.each(value, (video, index) => {
             let playlistItemRes = {
               kind: "youtube#playlistItem",
               snippet: {
                 playlistId: basePlaylistId,
-                resourceId: video.id.videoId
-              },
-              key: process.env.YOUTUBE_API_KEY
+                resourceId: video.id
+              }
             };
 
             let options = {
               method: "POST",
               uri: PLAYLIST_ITEMS_BASE,
+              qs: {
+                part: "snippet"
+              },
               body: playlistItemRes,
               headers: {
-                Authorization: "Bearer " + process.env.YOUTUBE_API_KEY
+                Authorization: "Bearer " + process.env.YOUTUBE_OAUTH2_TOKEN
               },
               json: true
             };
