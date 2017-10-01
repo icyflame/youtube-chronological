@@ -51,11 +51,21 @@ function getAccessToken (oauth2Client, callback) {
       // TODO: tokens should be set by OAuth2 client.
       console.log("Tokens: ", tokens);
       oauth2Client.setCredentials(tokens);
-      callback();
+      callback(null, tokens);
     });
   });
 }
 
-getAccessToken(oauth2Client, () => {
+getAccessToken(oauth2Client, (err, tokens) => {
+  console.log();
   console.log("COMPLETED!");
+  console.log();
+  console.log();
+
+  console.log("Access token:");
+  console.log();
+  console.log(tokens.access_token);
+  console.log();
+  console.log();
+  process.exit(0);
 });
