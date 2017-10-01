@@ -12,10 +12,19 @@ didn't do it. If you want to take it up, please feel free to submit a patch!
 In any case, I will put the instructions to run this script:
 
 1. Visit the [Google API Console](https://console.developers.google.com/apis/)
+
+  ![img](./img/api-console.png)
+
 2. Create a new project: Click on the dropdown in the top left next to the
 Google APIs logo, then press on the PLUS icon and create a new project.
+
+  ![img](./img/create-project.png)
+
 3. Enable the Youtube Data API for your project
 4. Create OAuth2 Credentials for your project
+
+  ![img](./img/create-credentials.png)
+
 5. Copy the CLIENT_ID and CLIENT_SECRET to your `.env` file template
 6. After copying, run the `oauth2.js` script using:
 
