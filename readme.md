@@ -70,9 +70,9 @@ window
 10. Copy the ID of this playlist to the `.env` template. A playlist link looks
 like this:
 
-  ```sh
-  https://youtube.com/playlist?list=<PLAYLIST_ID>
-  ```
+    ```sh
+    https://youtube.com/playlist?list=<PLAYLIST_ID>
+    ```
 
 11. Put the name of the channel that you want to create the playlist for in the
     `.env` file.
@@ -95,10 +95,11 @@ together.
 
 ## Why?
 
-In the YouTube universe, search is great, CDNs and DevOps is amazing. But
-binging on all the videos a channel has uploaded is not great. In fact, it's one
-of the most irritating things to do. I have searched for online websites that do
-it, browser plugins that will autoplay videos. No luck anywhere.
+In the YouTube universe, search is great, CDNs are everywhere and DevOps is
+amazing. But binging on all the videos a channel has uploaded is not great. In
+fact, it's one of the most irritating things to do. I have searched for online
+websites that do it, browser plugins that will autoplay videos. No luck
+anywhere.
 
 Considering that the Youtube Data API is well documented, I decided to write
 this script.
