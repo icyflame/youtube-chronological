@@ -5,7 +5,6 @@ const async = require('async');
 const Promise = require('bluebird');
 const _ = require('lodash');
 
-
 // BASE URLS
 const CHANNELS_BASE = "https://www.googleapis.com/youtube/v3/channels";
 const ACTIVITIES_BASE = "https://www.googleapis.com/youtube/v3/activities";
