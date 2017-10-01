@@ -118,6 +118,11 @@ Promise.map(channels, username => {
             process.exit(0);
           }
 
+          console.log();
+          console.log("Will add " + value.length + " videos to the given playlist.");
+          console.log("This might take some time, please wait patiently!");
+          console.log();
+
           Promise.each(value, (video, index) => {
             let playlistItemRes = {
               kind: "youtube#playlistItem",
