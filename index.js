@@ -11,17 +11,20 @@ const ACTIVITIES_BASE = "https://www.googleapis.com/youtube/v3/activities";
 const SEARCH_BASE = "https://www.googleapis.com/youtube/v3/search";
 const PLAYLIST_ITEMS_BASE = "https://www.googleapis.com/youtube/v3/playlistItems";
 
-let basePlaylistId = 'PL5iG2ljuT4pj4-D_2BWnyNe5QfqRVkl7v';
-let channels = [ 'h2h2productions', 'h3h3productions', '007007Delta' ];
+let basePlaylistId = process.env.BASE_PLAYLIST_ID;
+let channels = process.env.CHANNELS.split(',');
+let updatePlaylist = process.env.UPDATE_PLAYLIST && process.env.UPDATE_PLAYLIST === "true";
 
 // 1: Get channel IDs from the channel usernames
 Promise.map(channels, username => {
   let options = {
     uri: CHANNELS_BASE,
     qs: {
-      key: process.env.YOUTUBE_API_KEY,
       part: "snippet",
       forUsername: username
+    },
+    headers: {
+      Authorization: "Bearer " + process.env.YOUTUBE_OAUTH2_TOKEN
     },
     json: true
   };
@@ -54,13 +57,15 @@ Promise.map(channels, username => {
         let options = {
           uri: SEARCH_BASE,
           qs: {
-            key: process.env.YOUTUBE_API_KEY,
             channelId: id,
             part: "snippet",
             type: "video",
             order: "date",
             maxResults: 50,
             pageToken: nextPageTokens[id]
+          },
+          headers: {
+            Authorization: "Bearer " + process.env.YOUTUBE_OAUTH2_TOKEN
           },
           json: true
         };
@@ -105,6 +110,14 @@ Promise.map(channels, username => {
 
           value = _.filter(value, video => video.id && video.id.kind === 'youtube#video');
 
+          if (!updatePlaylist) {
+            console.log();
+            console.log();
+            console.log("Update playlist boolean is set to false in this script");
+            console.log("To make changes to the playlist, open the index.js file and change the value of updatePlaylist to true");
+            process.exit(0);
+          }
+
           Promise.each(value, (video, index) => {
             let playlistItemRes = {
               kind: "youtube#playlistItem",
@@ -129,6 +142,8 @@ Promise.map(channels, username => {
 
             return rp(options);
           }).then(response => {
+            console.log();
+            console.log();
             console.log("PLAYLIST UPDATED!");
             console.log("Check this page: https://youtube.com/playlist?list=" + basePlaylistId);
           }).catch(error => {
