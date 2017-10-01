@@ -12,6 +12,7 @@
 // limitations under the License.
 
 'use strict';
+require('dotenv').config();
 
 var readline = require('readline');
 
@@ -22,8 +23,8 @@ var plus = google.plus('v1');
 // Client ID and client secret are available at
 // https://code.google.com/apis/console
 var REDIRECT_URL = 'urn:ietf:wg:oauth:2.0:oob'
-var CLIENT_ID="362978700092-1h46lit38urcctf1ohulr1im15p12bi6.apps.googleusercontent.com";
-var CLIENT_SECRET="sMzH_WCH5pZop4oyeof_cn8r"
+var CLIENT_ID=process.env.OAUTH2_CLIENT_ID;
+var CLIENT_SECRET=process.env.OAUTH2_SECRET;
 
 var oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
 
