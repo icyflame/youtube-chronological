@@ -9,8 +9,11 @@ const _ = require('lodash');
 // BASE URLS
 const CHANNELS_BASE = "https://www.googleapis.com/youtube/v3/channels";
 const ACTIVITIES_BASE = "https://www.googleapis.com/youtube/v3/activities";
+const SEARCH_BASE = "https://www.googleapis.com/youtube/v3/search";
+const PLAYLIST_ITEMS_BASE = "https://www.googleapis.com/youtube/v3/playlistItems";
 
-let channels = [ 'h3h3productions', 'h2h2productions', '007007Delta' ];
+let basePlaylistId = 'PL5iG2ljuT4pj4-D_2BWnyNe5QfqRVkl7v';
+let channels = [ 'h2h2productions', 'h3h3productions', '007007Delta' ];
 
 // 1: Get channel IDs from the channel usernames
 Promise.map(channels, username => {
@@ -35,6 +38,7 @@ Promise.map(channels, username => {
       return channel.items[0].id;
     }
   });
+
   console.log("Ids: ", channelIds);
 
   channelIds = [ channelIds[0] ];
@@ -49,11 +53,13 @@ Promise.map(channels, username => {
     (callback) => {
       Promise.map(channelIds, (id, index) => {
         let options = {
-          uri: ACTIVITIES_BASE,
+          uri: SEARCH_BASE,
           qs: {
             key: process.env.YOUTUBE_API_KEY,
             channelId: id,
-            part: "snippet,contentDetails",
+            part: "snippet",
+            type: "video",
+            order: "date",
             maxResults: 50,
             pageToken: nextPageTokens[id]
           },
@@ -62,7 +68,6 @@ Promise.map(channels, username => {
 
         return rp(options);
       }).then(videoLists => {
-        console.log(videoLists);
         nextPageTokens = { };
 
         _.map(channelIds, (id, index) => {
@@ -70,23 +75,19 @@ Promise.map(channels, username => {
             allVideos[id] = [ ];
           }
 
-          let uploadedItems = _.filter(videoLists[index].items, item => item.snippet.type === 'upload');
+          let uploadedItems = videoLists[index].items;
 
           allVideos[id] = _.concat(allVideos[id] || [ ], uploadedItems);
 
           let thisChannelsNextPageToken = videoLists[index].nextPageToken;
 
-          console.log("Channel next page token is: ", thisChannelsNextPageToken);
-
           if (_.isUndefined(thisChannelsNextPageToken)) {
-            console.log(`Removing ${id} from ${channelIds}`);
             _.pull(channelIds, id);
           } else {
             nextPageTokens[id] = thisChannelsNextPageToken;
           }
         });
 
-        console.log("Channel IDs: ", channelIds);
         callback(null);
       })
       .catch(error => {
@@ -100,13 +101,41 @@ Promise.map(channels, username => {
       } else {
         _.each(allVideos, (value, key) => {
           console.log(`${key} has ${value.length} videos`);
-          let latest = _.slice(value, 0, 10);
           _.reverse(value);
-          let oldest = _.slice(value, 0, 10);
-          console.log("LATEST: ");
-          console.log(latest);
-          console.log("OLDEST: ");
-          console.log(oldest);
+          console.log(require('util').inspect(value[0], { depth: null }));
+
+          value = _.filter(value, video => video.id && video.id.kind === 'youtube#video');
+
+          value = _.slice(value, 0, 3);
+
+          Promise.each(value, (video, index) => {
+            let playlistItemRes = {
+              kind: "youtube#playlistItem",
+              snippet: {
+                playlistId: basePlaylistId,
+                resourceId: video.id.videoId
+              },
+              key: process.env.YOUTUBE_API_KEY
+            };
+
+            let options = {
+              method: "POST",
+              uri: PLAYLIST_ITEMS_BASE,
+              body: playlistItemRes,
+              headers: {
+                Authorization: "Bearer " + process.env.YOUTUBE_API_KEY
+              },
+              json: true
+            };
+
+            return rp(options);
+          }).then(response => {
+            console.log("PLAYLIST UPDATED!");
+            console.log("Check this page: https://youtube.com/playlist?list=" + basePlaylistId);
+          }).catch(error => {
+            console.log("Problems while adding videos to playlist!");
+            console.error(error);
+          });
         });
       }
     });
