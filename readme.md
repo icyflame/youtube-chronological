@@ -65,37 +65,23 @@ window
     In this, copy the access token and paste it as the value for the
     `YOUTUBE_OAUTH2_TOKEN` key in the `.env` template.
 
-9. Create new playlist by running
-
-   ```sh
-   node playlist
-   ```
-
-   If this success, you should see:
-   ```sh
-
-   NEW PLAYLIST ID: PLPKy1pu9Q1g9_DkHHm3CyueoUs603Uq7U
-
-   ENV Updated!
-   ```
-
-   The script will access youtube, create new playlist and update the key in
-   `.env` file
-
-10. Put the name of the channel that you want to create the playlist for in the
+9. Put the name of the channel that you want to create the playlist for in the
     `.env` file.
 
     Note that you _have_ to put the username of the channel. NOT the channel's ID.
 
-11. Change the line `UPDATE_PLAYLIST=false` to `UPDATE_PLAYLIST=true` in the
+10. Change the line `UPDATE_PLAYLIST=false` to `UPDATE_PLAYLIST=true` in the
     .env file. This is a safety flag that exists in case you just want to check
     if the script runs without making any changes to the playlist.
 
-12. Now, RUN the script!
+11. Now, RUN the script!
 
     ```sh
     $ node index.js
     ```
+
+    The script will create a playlist with name "<Channels> Chronological <yyyy-mm-dd>",
+    then add the channels' videos in chronological order to the playlist
 
 _Note:_ These are for a future-me as much as for anyone else out there, so if
 you don't understand a sentence, please open an issue! we can figure it out
