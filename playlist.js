@@ -35,7 +35,7 @@ var playlist = function(channel_objs) {
   let channelName = channel_titles.join(", ");
   let playListTitle = channelName + ' - chronological - ' + (new Date()).toDateString();
 
-  console.log("Creating a playlist on YouTube with the title: ", playListTitle);
+  console.log("\nCreating a playlist on YouTube with the title: ", playListTitle);
 
   const options = {
     method: 'POST',

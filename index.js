@@ -36,7 +36,7 @@ Promise.map(channels, username => {
 .then(channels => {
   console.log("------------ STEP 1 -----------------");
   console.log("CHANNELS: ");
-  console.log(require('util').inspect(channels, { depth: null }));
+  console.log(require('util').inspect(channels, { depth: 2 }));
 
   playlist(channels)
   .then((playlistId) => {
@@ -56,6 +56,9 @@ Promise.map(channels, username => {
     console.log("------------ STEP 1 END -------------");
     console.log();
     console.log();
+    console.log();
+    console.log("----------------- STEP 2 -------------");
+
     // channelIds = [ channelIds[0] ];
 
     let channelIdsCopy = _.clone(channelIds);
@@ -143,6 +146,10 @@ Promise.map(channels, username => {
 
           videosToSort = _.sortBy(videosToSort, [ "time" ]);
 
+          console.log("----------------- STEP 2 END -------------");
+          console.log();
+          console.log();
+
           if (!updatePlaylist) {
             console.log();
             console.log();
@@ -152,8 +159,12 @@ Promise.map(channels, username => {
           }
 
           console.log();
+          console.log("-------------------- STEP 3 ----------------------");
+          console.log();
+          console.log();
           console.log("Will add " + videosToSort.length + " videos to the given playlist.");
           console.log("This might take some time, please wait patiently!");
+          console.log("You can check the playlist page for live updates: https://youtube.com/playlist?list=", basePlaylistId);
           console.log();
 
           Promise.each(videosToSort, (video, index) => {
