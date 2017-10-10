@@ -13,6 +13,7 @@
     "bluebird": "^3.5.0",
     "googleapis": "^22.2.0",
     "lodash": "^4.17.4",
+    "progress": "^2.0.0",
     "request": "^2.83.0",
     "request-promise": "^4.2.2"
   },

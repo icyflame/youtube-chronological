@@ -4,6 +4,7 @@ const rp = require('request-promise');
 const async = require('async');
 const Promise = require('bluebird');
 const _ = require('lodash');
+const ProgressBar = require('progress');
 
 const playlist = require('./playlist');
 
@@ -41,7 +42,7 @@ Promise.map(channels, username => {
   playlist(channels)
   .then((playlistId) => {
     //assign base playlist id
-    let basePlaylistId = playlistId;
+    let basePlaylistId = playlistId.trim();
     // 2: Get video IDs for these channels
     let channelIds = _.map(channels, channel => {
       if (channel.items.length > 0) {
@@ -167,6 +168,13 @@ Promise.map(channels, username => {
           console.log("You can check the playlist page for live updates: https://youtube.com/playlist?list=", basePlaylistId);
           console.log();
 
+          var bar = new ProgressBar('  downloading [:bar] :rate videos per second, :percent, ETA :etas', {
+            complete: '=',
+            incomplete: ' ',
+            width: 20,
+            total: videosToSort.length
+          });
+
           Promise.each(videosToSort, (video, index) => {
             let playlistItemRes = {
               kind: "youtube#playlistItem",
@@ -189,12 +197,11 @@ Promise.map(channels, username => {
               json: true
             };
 
-            if (index % 50 === 0) {
-              console.log("Sending request for video number ", index);
-            }
+            bar.tick();
 
             return rp(options);
           }).then(response => {
+            bar.complete();
             console.log();
             console.log();
             console.log("PLAYLIST UPDATED!");
