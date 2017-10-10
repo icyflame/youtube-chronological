@@ -18,7 +18,6 @@ Clone this repository and create a `.env` file.
 ```sh
 OAUTH2_CLIENT_ID=
 OAUTH2_SECRET=
-BASE_PLAYLIST_ID=
 CHANNELS=
 YOUTUBE_OAUTH2_TOKEN=
 UPDATE_PLAYLIST=false
@@ -68,7 +67,14 @@ window
 9. Put the name of the channel that you want to create the playlist for in the
     `.env` file.
 
-    Note that you _have_ to put the username of the channel. NOT the channel's ID.
+    Note that you _have_ to put the usernames of the channels. i.e if the
+    channel is available at
+
+    ```
+    https://www.youtube.com/user/h2h2productions
+    ```
+
+    then the username is `h2h2productions`.
 
 10. Change the line `UPDATE_PLAYLIST=false` to `UPDATE_PLAYLIST=true` in the
     .env file. This is a safety flag that exists in case you just want to check
@@ -80,7 +86,7 @@ window
     $ node index.js
     ```
 
-    The script will create a playlist with name "<Channels> Chronological <yyyy-mm-dd>",
+    The script will create a playlist with name "<Channels> Chronological <Date>",
     then add the channels' videos in chronological order to the playlist
 
 _Note:_ These are for a future-me as much as for anyone else out there, so if

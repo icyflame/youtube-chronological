@@ -67,5 +67,16 @@ getAccessToken(oauth2Client, (err, tokens) => {
   console.log(tokens.access_token);
   console.log();
   console.log();
-  process.exit(0);
+
+  require('fs').appendFile('.env', '\nYOUTUBE_OAUTH2_TOKEN=' + tokens.access_token, (err) => {
+    if (!err) {
+      console.log("Successfully written to the end of .env!");
+      console.log();
+      process.exit(0);
+    } else {
+      console.log("OH! There was an error");
+      console.error(err);
+      process.exit(1);
+    }
+  });
 });
