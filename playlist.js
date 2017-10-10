@@ -14,19 +14,9 @@ const ENV_FILE = '.env';
 
 // Util method to update .env file
 var updateEnvFile = function(playlistId) {
-  return new Promise(function(resolve, reject) {
-    fs.readFileAsync(ENV_FILE, ENCODING)
-    .then(data => {
-      const newData = data.replace(/BASE_PLAYLIST_ID=.*\n/, 'BASE_PLAYLIST_ID=' + playlistId + '\n');
-      return fs.writeFileAsync(ENV_FILE, newData, ENCODING);
-    }, reject)
-    .then(() => {
-      console.log('\nNEW PLAYLIST ID: ' + playlistId);
-      console.log('\nFind it on youtube at: https://youtube.com/playlist?list=' + playlistId);
-      console.log('\nENV Updated!\n');
-      resolve(playlistId);
-    }, reject);
-  });
+  console.log('\nNEW PLAYLIST ID: ' + playlistId);
+  console.log('\nFind it on youtube at: https://youtube.com/playlist?list=' + playlistId);
+  return fs.appendFileAsync(ENV_FILE, '\nBASE_PLAYLIST_ID=' + playlistId);
 }
 
 // Call youtube data api to create a playlist
@@ -58,9 +48,10 @@ var playlist = function(channel_objs) {
   };
   return new Promise(function(resolve, reject) {
     rp(options).then(res => {
-      const playlistId = res.id;
-      updateEnvFile(playlistId)
-      .then(resolve, reject);
+      updateEnvFile(res.id)
+      .then(() => {
+        resolve(res.id);
+      }, reject);
     }, reject);
   });
 }
