@@ -5,6 +5,7 @@ require('dotenv').config();
 const rp = require('request-promise');
 const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs'));
+const _ = require('lodash');
 
 // Define constants
 const PLAYLISTS_API_ENDPOINT = 'https://www.googleapis.com/youtube/v3/playlists';
@@ -28,7 +29,13 @@ var updateEnvFile = function(playlistId) {
 }
 
 // Call youtube data api to create a playlist
-var playlist = function(channelName) {
+var playlist = function(channel_objs) {
+  let channel_titles = _.map(channel_objs, (channel) => channel.items[0].snippet.title);
+  let channelName = channel_titles.join(", ");
+  let playListTitle = channelName + ' - chronological - ' + (new Date()).toDateString();
+
+  console.log("Creating a playlist on YouTube with the title: ", playListTitle);
+
   const options = {
     method: 'POST',
     uri: PLAYLISTS_API_ENDPOINT,
@@ -37,7 +44,7 @@ var playlist = function(channelName) {
     },
     body: {
       snippet: {
-        title: channelName + ' Chronological ' + (new Date()).toISOString().replace(/T.*$/,'')
+        title: playListTitle
       },
       status: {
         privacyStatus: 'private'
