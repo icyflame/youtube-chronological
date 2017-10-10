@@ -55,6 +55,7 @@ Promise.map(channels, username => {
 
     let nextPageTokens = { };
     let allVideos = { };
+    let videosToSort = [ ];
 
     async.whilst(
       () => !_.isEmpty(channelIds),
@@ -111,56 +112,73 @@ Promise.map(channels, username => {
         } else {
           _.each(allVideos, (value, key) => {
             console.log(`${key} has ${value.length} videos`);
-            _.reverse(value);
-            console.log(require('util').inspect(value[0], { depth: null }));
 
+            // We can only handle videos
             value = _.filter(value, video => video.id && video.id.kind === 'youtube#video');
 
-            if (!updatePlaylist) {
-              console.log();
-              console.log();
-              console.log("Update playlist boolean is set to false in this script");
-              console.log("To make changes to the playlist, open the index.js file and change the value of updatePlaylist to true");
-              return;
-            }
+            // Reverse so we get chronological order
+            _.reverse(value);
 
-            console.log();
-            console.log("Will add " + value.length + " videos to the given playlist.");
-            console.log("This might take some time, please wait patiently!");
-            console.log();
+            console.log(require('util').inspect(value[0], { depth: null }));
 
-            Promise.each(value, (video, index) => {
-              let playlistItemRes = {
-                kind: "youtube#playlistItem",
-                snippet: {
-                  playlistId: basePlaylistId,
-                  resourceId: video.id
-                }
-              };
-
-              let options = {
-                method: "POST",
-                uri: PLAYLIST_ITEMS_BASE,
-                qs: {
-                  part: "snippet"
-                },
-                body: playlistItemRes,
-                headers: {
-                  Authorization: "Bearer " + process.env.YOUTUBE_OAUTH2_TOKEN
-                },
-                json: true
-              };
-
-              return rp(options);
-            }).then(response => {
-              console.log();
-              console.log();
-              console.log("PLAYLIST UPDATED!");
-              console.log("Check this page: https://youtube.com/playlist?list=" + basePlaylistId);
-            }).catch(error => {
-              console.log("Problems while adding videos to playlist!");
-              console.error(error);
+            // Add a "time" field which is UTC milliseconds since epoch when
+            // video was published
+            _.each(value, video => {
+              video.time = (new Date(video.snippet.publishedAt)).getTime();
             });
+
+            console.log(require('util').inspect(value[0], { depth: null }));
+
+            // Put this annotated list in a bigger list of all videos
+            videosToSort = _.concat(videosToSort, value);
+          });
+
+          _.sortBy(videosToSort, [ "time" ]);
+
+          if (!updatePlaylist) {
+            console.log();
+            console.log();
+            console.log("Update playlist boolean is set to false in this script");
+            console.log("To make changes to the playlist, open the index.js file and change the value of updatePlaylist to true");
+            return;
+          }
+
+          console.log();
+          console.log("Will add " + videosToSort.length + " videos to the given playlist.");
+          console.log("This might take some time, please wait patiently!");
+          console.log();
+
+          Promise.each(videosToSort, (video, index) => {
+            let playlistItemRes = {
+              kind: "youtube#playlistItem",
+              snippet: {
+                playlistId: basePlaylistId,
+                resourceId: video.id
+              }
+            };
+
+            let options = {
+              method: "POST",
+              uri: PLAYLIST_ITEMS_BASE,
+              qs: {
+                part: "snippet"
+              },
+              body: playlistItemRes,
+              headers: {
+                Authorization: "Bearer " + process.env.YOUTUBE_OAUTH2_TOKEN
+              },
+              json: true
+            };
+
+            return rp(options);
+          }).then(response => {
+            console.log();
+            console.log();
+            console.log("PLAYLIST UPDATED!");
+            console.log("Check this page: https://youtube.com/playlist?list=" + basePlaylistId);
+          }).catch(error => {
+            console.log("Problems while adding videos to playlist!");
+            console.error(error);
           });
         }
       });
