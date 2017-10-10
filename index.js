@@ -33,7 +33,9 @@ Promise.map(channels, username => {
   return rp(options);
 })
 .then(channels => {
-  playlist(process.env.CHANNELS)
+  console.log(require('util').inspect(channels, { depth: null }));
+
+  playlist(channels)
   .then((playlistId) => {
     //assign base playlist id
     let basePlaylistId = playlistId;
@@ -119,7 +121,7 @@ Promise.map(channels, username => {
               console.log();
               console.log("Update playlist boolean is set to false in this script");
               console.log("To make changes to the playlist, open the index.js file and change the value of updatePlaylist to true");
-              process.exit(0);
+              return;
             }
 
             console.log();
