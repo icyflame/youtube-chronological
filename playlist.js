@@ -21,7 +21,7 @@ var updateEnvFile = function(playlistId) {
       return fs.writeFileAsync(ENV_FILE, newData, ENCODING);
     }, reject)
     .then(() => {
-      console.log('\nNEW PLAYLIST ID: ' + playlistId + '\n');
+      console.log('\nNEW PLAYLIST ID: ' + playlistId);
       console.log('\nFind it on youtube at: https://youtube.com/playlist?list=' + playlistId);
       console.log('\nENV Updated!\n');
       resolve(playlistId);

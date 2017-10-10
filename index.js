@@ -15,6 +15,7 @@ const PLAYLIST_ITEMS_BASE = "https://www.googleapis.com/youtube/v3/playlistItems
 
 let channels = process.env.CHANNELS.split(',');
 let updatePlaylist = process.env.UPDATE_PLAYLIST && process.env.UPDATE_PLAYLIST === "true";
+let idToNameHash = { };
 
 // 1: Get channel IDs from the channel usernames
 Promise.map(channels, username => {
@@ -44,6 +45,7 @@ Promise.map(channels, username => {
     // 2: Get video IDs for these channels
     let channelIds = _.map(channels, channel => {
       if (channel.items.length > 0) {
+        idToNameHash[channel.items[0].id] = channel.items[0].snippet.title;
         return channel.items[0].id;
       }
     });
@@ -86,14 +88,14 @@ Promise.map(channels, username => {
         }).then(videoLists => {
           nextPageTokens = { };
 
-          console.log("Channel Ids: ", channelIds);
+          // console.log("Channel Ids: ", channelIds);
 
           let ogChannelIds = _.clone(channelIds);
 
           _.map(ogChannelIds, (id, index) => {
             let uploadedItems = videoLists[index].items;
 
-            console.log("Adding videos to channel ID: ", id);
+            // console.log("Adding videos to channel ID: ", id);
             allVideos[id] = _.concat(allVideos[id] || [ ], uploadedItems);
 
             let thisChannelsNextPageToken = videoLists[index].nextPageToken;
@@ -117,7 +119,7 @@ Promise.map(channels, username => {
           console.error(error);
         } else {
           _.each(allVideos, (value, key) => {
-            console.log(`${key} has ${value.length} videos`);
+            console.log(`${key} ( ${idToNameHash[key]} ) has ${value.length} videos`);
 
             // We can only handle videos
             value = _.filter(value, video => video.id && video.id.kind === 'youtube#video');
