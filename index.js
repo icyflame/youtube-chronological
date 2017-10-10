@@ -49,7 +49,7 @@ Promise.map(channels, username => {
 
     console.log("Ids: ", channelIds);
 
-    channelIds = [ channelIds[0] ];
+    // channelIds = [ channelIds[0] ];
 
     let channelIdsCopy = _.clone(channelIds);
 
