@@ -133,7 +133,7 @@ Promise.map(channels, username => {
             videosToSort = _.concat(videosToSort, value);
           });
 
-          _.sortBy(videosToSort, [ "time" ]);
+          videosToSort = _.sortBy(videosToSort, [ "time" ]);
 
           if (!updatePlaylist) {
             console.log();
@@ -169,6 +169,10 @@ Promise.map(channels, username => {
               },
               json: true
             };
+
+            if (index % 50 === 0) {
+              console.log("Sending request for video number ", index);
+            }
 
             return rp(options);
           }).then(response => {
