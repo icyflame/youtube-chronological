@@ -33,6 +33,8 @@ Promise.map(channels, username => {
   return rp(options);
 })
 .then(channels => {
+  console.log("------------ STEP 1 -----------------");
+  console.log("CHANNELS: ");
   console.log(require('util').inspect(channels, { depth: null }));
 
   playlist(channels)
@@ -40,15 +42,18 @@ Promise.map(channels, username => {
     //assign base playlist id
     let basePlaylistId = playlistId;
     // 2: Get video IDs for these channels
-    console.log(channels);
     let channelIds = _.map(channels, channel => {
       if (channel.items.length > 0) {
         return channel.items[0].id;
       }
     });
 
-    console.log("Ids: ", channelIds);
+    channelIds = _.filter(channelIds, channel => !_.isUndefined(channel));
 
+    console.log("Channel Ids: ", channelIds);
+    console.log("------------ STEP 1 END -------------");
+    console.log();
+    console.log();
     // channelIds = [ channelIds[0] ];
 
     let channelIdsCopy = _.clone(channelIds);
@@ -81,13 +86,14 @@ Promise.map(channels, username => {
         }).then(videoLists => {
           nextPageTokens = { };
 
-          _.map(channelIds, (id, index) => {
-            if (_.isUndefined(allVideos[id])) {
-              allVideos[id] = [ ];
-            }
+          console.log("Channel Ids: ", channelIds);
 
+          let ogChannelIds = _.clone(channelIds);
+
+          _.map(ogChannelIds, (id, index) => {
             let uploadedItems = videoLists[index].items;
 
+            console.log("Adding videos to channel ID: ", id);
             allVideos[id] = _.concat(allVideos[id] || [ ], uploadedItems);
 
             let thisChannelsNextPageToken = videoLists[index].nextPageToken;
@@ -119,7 +125,7 @@ Promise.map(channels, username => {
             // Reverse so we get chronological order
             _.reverse(value);
 
-            console.log(require('util').inspect(value[0], { depth: null }));
+            // console.log(require('util').inspect(value[0], { depth: null }));
 
             // Add a "time" field which is UTC milliseconds since epoch when
             // video was published
@@ -127,7 +133,7 @@ Promise.map(channels, username => {
               video.time = (new Date(video.snippet.publishedAt)).getTime();
             });
 
-            console.log(require('util').inspect(value[0], { depth: null }));
+            // console.log(require('util').inspect(value[0], { depth: null }));
 
             // Put this annotated list in a bigger list of all videos
             videosToSort = _.concat(videosToSort, value);

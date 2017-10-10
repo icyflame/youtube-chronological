@@ -22,7 +22,8 @@ var updateEnvFile = function(playlistId) {
     }, reject)
     .then(() => {
       console.log('\nNEW PLAYLIST ID: ' + playlistId + '\n');
-      console.log('ENV Updated!\n');
+      console.log('\nFind it on youtube at: https://youtube.com/playlist?list=' + playlistId);
+      console.log('\nENV Updated!\n');
       resolve(playlistId);
     }, reject);
   });
