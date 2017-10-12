@@ -86,7 +86,7 @@ window
     $ node index.js
     ```
 
-    The script will create a playlist with name "<Channels> Chronological <Date>",
+    The script will create a playlist with name "_Channel Names_ Chronological _Date_",
     then add the channels' videos in chronological order to the playlist
 
 _Note:_ These are for a future-me as much as for anyone else out there, so if
