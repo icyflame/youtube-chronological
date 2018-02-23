@@ -14,30 +14,81 @@ const ACTIVITIES_BASE = "https://www.googleapis.com/youtube/v3/activities";
 const SEARCH_BASE = "https://www.googleapis.com/youtube/v3/search";
 const PLAYLIST_ITEMS_BASE = "https://www.googleapis.com/youtube/v3/playlistItems";
 
-let channels = process.env.CHANNELS.split(',');
+let channels = process.env.CHANNELS ? process.env.CHANNELS.split(',') : [ ];
+let direct_channel_ids = process.env.CHANNEL_IDS ? process.env.CHANNEL_IDS.split(',') : [ ]
 let updatePlaylist = process.env.UPDATE_PLAYLIST && process.env.UPDATE_PLAYLIST === "true";
 let idToNameHash = { };
+let bar;
+
+// Function to get the promise for getting channel IDs
+
+// Given a comma-separated string of channel IDs get the associated channel
+// objects
+function getChannelObjects(channel_ids) {
+    if (channel_ids && channel_ids.length > 0) {
+        let options = {
+            uri: CHANNELS_BASE,
+            qs: {
+                part: "snippet",
+                id: channel_ids
+            },
+            headers: {
+                Authorization: "Bearer " + process.env.YOUTUBE_OAUTH2_TOKEN
+            },
+            json: true
+        };
+
+        return rp(options);
+    } else {
+        return Promise.resolve([]);
+    }
+}
+
+// Given an array of Youtube usernames, get the associated channel objects
+// Returns a list of channel objects
+function getChannelObjectsFromUsernames(channels) {
+    if (channels.length > 0) {
+        return Promise.map(channels, username => {
+            let options = {
+                uri: CHANNELS_BASE,
+                qs: {
+                    part: "snippet",
+                    forUsername: username
+                },
+                headers: {
+                    Authorization: "Bearer " + process.env.YOUTUBE_OAUTH2_TOKEN
+                },
+                json: true
+            };
+
+            return rp(options);
+        });
+    } else {
+        return Promise.resolve([]);
+    }
+}
+
+all_channel_objs = [ ]
 
 // 1: Get channel IDs from the channel usernames
-Promise.map(channels, username => {
-  let options = {
-    uri: CHANNELS_BASE,
-    qs: {
-      part: "snippet",
-      forUsername: username
-    },
-    headers: {
-      Authorization: "Bearer " + process.env.YOUTUBE_OAUTH2_TOKEN
-    },
-    json: true
-  };
+Promise.all([
+                getChannelObjectsFromUsernames(channels),
+                getChannelObjects(process.env.CHANNEL_IDS)
+            ])
+            .then(channel_objs => {
 
-  return rp(options);
-})
-.then(channels => {
+              console.log(channel_objs)
+
+  channels = [...channel_objs[0], channel_objs[1]]
+
   console.log("------------ STEP 1 -----------------");
   console.log("CHANNELS: ");
   console.log(require('util').inspect(channels, { depth: 2 }));
+
+  if (channels.length == 0) {
+      console.error("No channels given");
+      process.exit(1);
+  }
 
   playlist(channels)
   .then((playlistId) => {
@@ -165,10 +216,10 @@ Promise.map(channels, username => {
           console.log();
           console.log("Will add " + videosToSort.length + " videos to the given playlist.");
           console.log("This might take some time, please wait patiently!");
-          console.log("You can check the playlist page for live updates: https://youtube.com/playlist?list=", basePlaylistId);
+          console.log("You can check the playlist page for live updates: https://youtube.com/playlist?list=" + basePlaylistId);
           console.log();
 
-          var bar = new ProgressBar('  downloading [:bar] :rate videos per second, :percent, ETA :etas', {
+          bar = new ProgressBar('  downloading [:bar] :rate videos per second, :percent, ETA :etas', {
             complete: '=',
             incomplete: ' ',
             width: 20,
@@ -201,7 +252,6 @@ Promise.map(channels, username => {
 
             return rp(options);
           }).then(response => {
-            bar.complete();
             console.log();
             console.log();
             console.log("PLAYLIST UPDATED!");
@@ -218,6 +268,6 @@ Promise.map(channels, username => {
   });
 })
 .catch(error => {
-  console.log("Error while retrieving the channel IDs");
+  console.log("Error while retrieving the channel objects for given channel usernames and channel IDs");
   console.error(error);
-});
+})
