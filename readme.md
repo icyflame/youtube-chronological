@@ -19,6 +19,7 @@ Clone this repository and create a `.env` file.
 OAUTH2_CLIENT_ID=
 OAUTH2_SECRET=
 CHANNELS=
+CHANNEL_IDS=
 YOUTUBE_OAUTH2_TOKEN=
 UPDATE_PLAYLIST=false
 ```
@@ -75,6 +76,9 @@ window
     ```
 
     then the username is `h2h2productions`.
+
+    If you have the channel ID for the channel, then you have to put that as a
+    comma separated string as the value of the variable `CHANNEL_IDS`
 
 10. Change the line `UPDATE_PLAYLIST=false` to `UPDATE_PLAYLIST=true` in the
     .env file. This is a safety flag that exists in case you just want to check
